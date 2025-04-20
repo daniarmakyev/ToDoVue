@@ -12,6 +12,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'clicked', id: number | string): void
   (e: 'change', post: Post): void
+  (e: 'deletePost', id: number | string): void
 }>()
 </script>
 
@@ -26,6 +27,7 @@ const emit = defineEmits<{
         <button @click="emit('change', props.post)" class="post__btn">
           {{ changeMode ? (editedId === post.id ? 'Cancel' : 'Edit') : 'Edit' }}
         </button>
+        <button @click="emit('deletePost', props.post.id!)" class="post__btn">Delete</button>
       </div>
     </div>
     <div class="post__bottom" :class="{ 'post_bottom--opened': props.post.opened }">

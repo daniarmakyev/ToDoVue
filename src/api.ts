@@ -19,3 +19,7 @@ export const createPost = async (data: Post) => {
 export const editPost = async (data: Post) => {
   await axios.put(`http://localhost:3000/posts/${data.id}`, data)
 }
+
+export const deletePost = async (id: number | string) => {
+  await axios.delete(`http://localhost:3000/posts/${id}`)
+}

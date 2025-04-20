@@ -18,13 +18,14 @@
       :editedId="editedId"
       @clicked="handelClick"
       @change="fillInputEditedPost"
+      @deletePost="handelDeletePost"
     />
   </div>
 </template>
 
 <script lang="ts">
 import { onMounted, ref } from 'vue'
-import { createPost, editPost, getPosts, type Post } from './api'
+import { createPost, deletePost, editPost, getPosts, type Post } from './api'
 import PostComp from '@/components/PostComp.vue'
 
 export default {
@@ -83,6 +84,15 @@ export default {
       if (post) post.opened = !post.opened
     }
 
+    async function handelDeletePost(id: number | string) {
+      await deletePost(id)
+      const data = await getPosts()
+      posts.value = data.map((item) => ({
+        ...item,
+        opened: false,
+      }))
+    }
+
     async function fillInputEditedPost(post: Post) {
       if (editedId.value === post.id && changeMode.value === true) {
         changeMode.value = false
@@ -115,6 +125,7 @@ export default {
       handelSubmit,
       fillInputEditedPost,
       checkInputs,
+      handelDeletePost,
     }
   },
 }
