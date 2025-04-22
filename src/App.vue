@@ -23,111 +23,91 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { createPost, deletePost, editPost, getPosts, type Post } from './api'
 import PostComp from '@/components/PostComp.vue'
 
-export default {
-  components: {
-    PostComp,
-  },
-  setup() {
-    const posts = ref<Post[]>([])
-    const title = ref<string>()
-    const content = ref<string>()
-    const changeMode = ref<boolean>(false)
-    const editedId = ref<number | string | null>()
-    onMounted(async () => {
-      const data = await getPosts()
-      posts.value = data.map((item) => ({
-        ...item,
-        opened: false,
-      }))
-    })
+const posts = ref<Post[]>([])
+const title = ref<string>()
+const content = ref<string>()
+const changeMode = ref<boolean>(false)
+const editedId = ref<number | string | null>()
+onMounted(async () => {
+  const data = await getPosts()
+  posts.value = data.map((item) => ({
+    ...item,
+    opened: false,
+  }))
+})
 
-    async function handelSubmit() {
-      if (changeMode.value) {
-        if (title.value && content.value) {
-          await editPost({
-            title: title.value,
-            content: content.value,
-            id: editedId.value!,
-          })
-        } else {
-          console.log(alert('Fill all inputs!'))
-          const post = posts.value.find((post) => post.id === editedId.value)
-          title.value = post?.title
-          content.value = post?.content
-        }
-      } else {
-        if (title.value && content.value) {
-          await createPost({
-            title: title.value,
-            content: content.value,
-          })
-          title.value = ''
-          content.value = ''
-        } else {
-          console.log(title.value, content.value)
-        }
-      }
-      const data = await getPosts()
-      posts.value = data.map((item) => ({
-        ...item,
-        opened: false,
-      }))
+async function handelSubmit() {
+  if (changeMode.value) {
+    if (title.value && content.value) {
+      await editPost({
+        title: title.value,
+        content: content.value,
+        id: editedId.value!,
+      })
+    } else {
+      console.log(alert('Fill all inputs!'))
+      const post = posts.value.find((post) => post.id === editedId.value)
+      title.value = post?.title
+      content.value = post?.content
     }
-
-    function handelClick(id: number | string) {
-      const post = posts.value.find((p) => p.id === id)
-      if (post) post.opened = !post.opened
+  } else {
+    if (title.value && content.value) {
+      await createPost({
+        title: title.value,
+        content: content.value,
+      })
+      title.value = ''
+      content.value = ''
+    } else {
+      console.log(title.value, content.value)
     }
+  }
+  const data = await getPosts()
+  posts.value = data.map((item) => ({
+    ...item,
+    opened: false,
+  }))
+}
 
-    async function handelDeletePost(id: number | string) {
-      await deletePost(id)
-      const data = await getPosts()
-      posts.value = data.map((item) => ({
-        ...item,
-        opened: false,
-      }))
-    }
+function handelClick(id: number | string) {
+  const post = posts.value.find((p) => p.id === id)
+  if (post) post.opened = !post.opened
+}
 
-    async function fillInputEditedPost(post: Post) {
-      if (editedId.value === post.id && changeMode.value === true) {
-        changeMode.value = false
-        title.value = ''
-        content.value = ''
-        editedId.value = null
+async function handelDeletePost(id: number | string) {
+  await deletePost(id)
+  const data = await getPosts()
+  posts.value = data.map((item) => ({
+    ...item,
+    opened: false,
+  }))
+}
 
-        return
-      }
-      changeMode.value = true
-      title.value = post.title
-      content.value = post.content
-      editedId.value = post.id
-      console.log(editedId.value)
-    }
+async function fillInputEditedPost(post: Post) {
+  if (editedId.value === post.id && changeMode.value === true) {
+    changeMode.value = false
+    title.value = ''
+    content.value = ''
+    editedId.value = null
 
-    function checkInputs() {
-      if (!title.value && !content.value) {
-        changeMode.value = false
-      }
-    }
+    return
+  }
+  changeMode.value = true
+  title.value = post.title
+  content.value = post.content
+  editedId.value = post.id
+  console.log(editedId.value)
+}
 
-    return {
-      posts,
-      title,
-      content,
-      changeMode,
-      editedId,
-      handelClick,
-      handelSubmit,
-      fillInputEditedPost,
-      checkInputs,
-      handelDeletePost,
-    }
-  },
+function checkInputs() {
+  if (!title.value && !content.value) {
+    changeMode.value = false
+  }
 }
 </script>
 

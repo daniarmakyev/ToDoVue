@@ -1,11 +1,6 @@
 {
   "posts": [
     {
-      "title": "Hello World",
-      "content": "This is a post",
-      "id": "1"
-    },
-    {
       "title": "Another Post",
       "content": "This is another post",
       "id": "2"
